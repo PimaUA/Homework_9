@@ -14,7 +14,8 @@ public class ValueCalculator implements Runnable {
         this.array = array;
     }
 
-    void doCalc(float el) {
+    void doCalc(float el) throws InterruptedException {
+        long startTime = System.currentTimeMillis();                                     /*mark start time of program*/
         float[] destArr1 = new float[halfArrayLength];
         float[] destArr2 = new float[halfArrayLength];
         Arrays.fill(array, el);                                                                 /*fill array*/
@@ -24,10 +25,13 @@ public class ValueCalculator implements Runnable {
                 destArr2, 0, halfArrayLength);
         final Thread thread1 = new Thread(new ValueCalculator(destArr1));                   /*create two threads*/
         final Thread thread2 = new Thread(new ValueCalculator(destArr2));
-        thread1.start();
+        thread1.start();                                                                    /*start two threads*/
         thread2.start();
+        thread1.join();                                          /*making main thread to wait for the other threads */
+        thread2.join();
         System.arraycopy(destArr1, 0, array, 0, halfArrayLength);           /*merge two arrays into one*/
         System.arraycopy(destArr2, 0, array, halfArrayLength, halfArrayLength);
+        System.out.println("Time in msec: " + (System.currentTimeMillis() - startTime));    /*calc. program time*/
     }
 
     @Override
